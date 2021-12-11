@@ -1,0 +1,5 @@
+pandas
+gensim
+tqdm
+transformers
+torch
