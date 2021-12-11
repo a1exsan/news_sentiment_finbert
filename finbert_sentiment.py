@@ -30,10 +30,12 @@ class sentence_dataset():
 
 class finBertsentiment():
     def __init__(self):
-        if os.path.exists() and os.path.exists():
+
+        self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
+
+        if os.path.exists('finBertML.model') and os.path.exists('tokenizerML.model'):
             with open('finBertML.model', 'rb') as f:
                 finbert = pickle.load(f)
-                self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
                 self.finbert = finbert.to(self.device)
 
             with open('tokenizerML.model', 'rb') as f:
@@ -41,13 +43,15 @@ class finBertsentiment():
         else:
 
             finbert = BertForSequenceClassification.from_pretrained('yiyanghkust/finbert-tone', num_labels=3)
-            tokenizer = BertTokenizer.from_pretrained('yiyanghkust/finbert-tone')
+            self.finbert = finbert.to(self.device)
+
+            self.tokenizer = BertTokenizer.from_pretrained('yiyanghkust/finbert-tone')
 
             with open('finBertML.model', 'wb') as f:
                 pickle.dump(finbert, f)
 
             with open('tokenizerML.model', 'wb') as f:
-                pickle.dump(tokenizer, f)
+                pickle.dump(self.tokenizer, f)
 
     def get_sentiment(self, docs):
         #sentenses = ['The company has shown high profitability in the current quarter',
@@ -103,7 +107,7 @@ def main():
 
     out_DF = pd.DataFrame(out_ds)
     print(out_DF)
-    out_DF.to_csv('dataset/finbert_dataset.csv')
+    out_DF.to_csv('dataset/finbert_DS_.csv')
 
 
 
